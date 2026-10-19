@@ -14,7 +14,7 @@ h1 {
 }
 
 /* Input Field and Button */
-#city-input {
+#state-input {
   display: block;
   margin: 20px auto;
   padding: 10px;
@@ -25,7 +25,7 @@ h1 {
   border-radius: 4px;
 }
 
-#fetch-weather {
+#fetch-alerts {
   display: block;
   margin: 10px auto;
   padding: 10px 20px;
@@ -37,12 +37,12 @@ h1 {
   cursor: pointer;
 }
 
-#fetch-weather:hover {
+#fetch-alerts:hover {
   background-color: #0056b3;
 }
 
 /* Weather Display Section */
-#weather-display {
+#alerts-display {
   margin: 20px auto;
   padding: 10px;
   width: 90%;
@@ -55,10 +55,14 @@ h1 {
 
 /* Error Message */
 #error-message {
-  color: red;
+  color: #b42318;
   font-weight: bold;
   text-align: center;
   margin-top: 10px;
+}
+
+#error-message.error {
+  color: #b42318;
 }
 
 /* Hidden Class for Error Handling */
@@ -73,7 +77,6 @@ h1 {
   text-align: center;
 }
 
-#loading-spinner img {
-  width: 50px;
-  height: 50px;
+#loading-spinner:not(.hidden) {
+  display: block;
 }

@@ -76,10 +76,8 @@ describe('Weather Alerts App - Input clearing', () => {
       json: async () => ({
         title: "Weather Alerts",
         features: [
-          { properties: { headline: "Flood warning in your area" }},
-          { properties: { headline: "Air quality alert in your area" }},
-          { properties: { headline: "Severe thunderstorm warning in your area" }},
-          { properties: { headline: "Tornado watch for the region" }}
+          { properties: { headline: "Heat advisory in your area" }},
+          { properties: { headline: "Wind warning in your area" }}
         ]
       })
     })
@@ -89,11 +87,10 @@ describe('Weather Alerts App - Input clearing', () => {
 
     await new Promise(resolve => setTimeout(resolve, 0))
 
-    expect(displayDiv).toHaveTextContent('Weather Alerts: 4')
-    expect(displayDiv).toHaveTextContent('Flood warning in your area')
-    expect(displayDiv).toHaveTextContent('Air quality alert in your area')
-    expect(displayDiv).toHaveTextContent('Severe thunderstorm warning in your area')
-    expect(displayDiv).toHaveTextContent('Tornado watch for the region')
+    expect(displayDiv).toHaveTextContent('Weather Alerts: 2')
+    expect(displayDiv).toHaveTextContent('Heat advisory in your area')
+    expect(displayDiv).toHaveTextContent('Wind warning in your area')
+    expect(displayDiv).not.toHaveTextContent('Flood warning in your area')
   })
 
   it('clears the input field after clicking fetch', async () => {
@@ -171,5 +168,30 @@ describe('Weather Alerts App - Input clearing', () => {
     await new Promise(resolve => setTimeout(resolve, 0))
     expect(errorDiv.textContent).toBe('')
     expect(errorDiv).toHaveClass('hidden')
+  })
+
+  it('rejects invalid state abbreviations without making a request', async () => {
+    const { getByPlaceholderText, getByText } = require('@testing-library/dom').within(container)
+    const input = getByPlaceholderText('Enter state abbreviation')
+    const button = getByText('Get Weather Alerts')
+
+    input.value = 'ny'
+    button.click()
+
+    expect(input.value).toBe('')
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(container.querySelector('#error-message')).toHaveTextContent(/two capital letters/i)
+  })
+
+  it('displays an error when the API responds unsuccessfully', async () => {
+    const { getByPlaceholderText, getByText } = require('@testing-library/dom').within(container)
+    fetchMock.mockResolvedValue({ ok: false, status: 503 })
+
+    getByPlaceholderText('Enter state abbreviation').value = 'NY'
+    getByText('Get Weather Alerts').click()
+
+    await new Promise(resolve => setTimeout(resolve, 0))
+
+    expect(container.querySelector('#error-message')).toHaveTextContent('Request failed (503)')
   })
 })
